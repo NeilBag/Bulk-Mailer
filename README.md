@@ -33,7 +33,7 @@ Flask Bulk Emailer is a Python-based web application designed to simplify sendin
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/your-username/your-repository-name.git
+    git clone [https://github.com/your-username/your-repository-name.git](https://github.com/NeilBag/Bulk-Mailer.gi](https://github.com/NeilBag/Bulk-Mailer.git)
     cd your-repository-name
     ```
     *(Replace `https://github.com/your-username/your-repository-name.git` with the actual URL of this repository if you know it, otherwise leave as a placeholder).*
