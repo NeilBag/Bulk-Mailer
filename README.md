@@ -200,3 +200,7 @@ When you first access the application, you'll see a form with the following fiel
 │   └── index.html      # Template for the main email sending form page.
 └── uploads/            # Created automatically, stores uploaded CSV and HTML files.
 ```
+## License
+
+This project is licensed under the **GNU General Public License v3.0**.
+See the [LICENSE](LICENSE) file for full details.
