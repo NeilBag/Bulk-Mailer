@@ -1,0 +1,8 @@
+/* Add any custom styles here */
+body {
+    padding-bottom: 50px; /* Prevent content from hiding behind footer if you add one */
+}
+
+.table th {
+    white-space: nowrap;
+}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Sending Dashboard{% endblock %}
+
+{% block content %}
+<h1>Email Sending Dashboard</h1>
+<p class="text-muted">Shows the status of bulk email sending jobs initiated by this application. Refresh the page to see updates.</p>
+ <p class="text-danger"><strong>Disclaimer:</strong> 'Sent' means the application *attempted* to send. 'Failed' means the application encountered an error during sending. This dashboard DOES NOT track actual email delivery, bounces, or opens.</p>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Job ID</th>
+            <th>Status</th>
+            <th>Subject</th>
+            <th>CSV File</th>
+            <th>Template File</th>
+            <th>Total</th>
+            <th>Sent</th>
+            <th>Failed</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if jobs %}
+            {% for job in jobs %}
+            <tr>
+                <td>{{ job.job_uuid[:8] }}...</td> {# Shortened UUID #}
+                <td>
+                    {% if job.status == 'Completed' %}
+                        <span class="badge bg-success">{{ job.status }}</span>
+                    {% elif job.status == 'Running' %}
+                        <span class="badge bg-info text-dark">{{ job.status }}</span>
+                     {% elif job.status == 'Pending' %}
+                        <span class="badge bg-secondary">{{ job.status }}</span>
+                    {% elif 'Error' in job.status or 'Failed' in job.status %}
+                         <span class="badge bg-danger">{{ job.status }}</span>
+                    {% else %}
+                         <span class="badge bg-warning text-dark">{{ job.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ job.subject }}</td>
+                <td>{{ job.csv_filename }}</td>
+                <td>{{ job.html_filename }}</td>
+                <td>{{ job.total_emails if job.total_emails is not none else 'N/A' }}</td>
+                <td>{{ job.sent_count }}</td>
+                <td>{{ job.failed_count }}</td>
+                <td>{{ job.start_time.strftime('%Y-%m-%d %H:%M:%S') if job.start_time else 'N/A' }}</td>
+                <td>{{ job.end_time.strftime('%Y-%m-%d %H:%M:%S') if job.end_time else 'N/A' }}</td>
+                <td>
+                    {% if job.failed_count > 0 %}
+                       <a href="{{ url_for('job_failures', job_uuid=job.job_uuid) }}" class="btn btn-warning btn-sm">View Failures</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="11" class="text-center">No email sending jobs found yet.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+{# Optional: Add a template for job_failures if implementing that view #}
+
+{% endblock %}

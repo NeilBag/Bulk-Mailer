@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Send Bulk Emails{% endblock %}
+
+{% block content %}
+<h1>Send Bulk Emails</h1>
+<p class="text-muted">Upload a CSV (with 'FirstName' and 'Email' columns) and an HTML email template.</p>
+<p class="text-warning"><strong>Warning:</strong> Use App Passwords for Gmail/Google Workspace if 2FA is enabled. Sending large volumes may violate provider terms.</p>
+
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('index') }}">
+    <div class="mb-3">
+        <label for="csv_file" class="form-label">CSV File (with FirstName, Email columns)</label>
+        <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+    </div>
+    <div class="mb-3">
+        <label for="html_template" class="form-label">HTML Email Template</label>
+        <input type="file" class="form-control" id="html_template" name="html_template" accept=".html,.htm" required>
+    </div>
+    <hr>
+    <h5>Email Details</h5>
+     <div class="mb-3">
+        <label for="subject" class="form-label">Email Subject</label>
+        <input type="text" class="form-control" id="subject" name="subject" required>
+    </div>
+    <hr>
+    <h5>Sender SMTP Credentials (Handle with care!)</h5>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="sender_email" class="form-label">Sender Email Address</label>
+            <input type="email" class="form-control" id="sender_email" name="sender_email" required>
+        </div>
+         <div class="col-md-6">
+            <label for="sender_password" class="form-label">Sender Password / App Password</label>
+            <input type="password" class="form-control" id="sender_password" name="sender_password" required>
+        </div>
+        <div class="col-md-8">
+            <label for="smtp_server" class="form-label">SMTP Server Address</label>
+            <input type="text" class="form-control" id="smtp_server" name="smtp_server" placeholder="e.g., smtp.gmail.com" required>
+        </div>
+        <div class="col-md-4">
+            <label for="smtp_port" class="form-label">SMTP Port</label>
+            <input type="number" class="form-control" id="smtp_port" name="smtp_port" placeholder="e.g., 587 or 465" required>
+        </div>
+         <div class="col-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="true" id="use_tls" name="use_tls" checked>
+                <label class="form-check-label" for="use_tls">
+                    Use TLS (Recommended for port 587)
+                </label>
+            </div>
+             <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="true" id="use_ssl" name="use_ssl">
+                <label class="form-check-label" for="use_ssl">
+                    Use SSL (Usually for port 465, overrides TLS)
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4">Start Sending Emails</button>
+</form>
+{% endblock %}

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Unlock Your Weight Loss Goals!</title>
+    <style type="text/css">
+        /* Basic Reset & Body Styles */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #f4f4f4; font-family: Arial, sans-serif; }
+
+        /* Main Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        .header {
+            background-color: #4CAF50; /* Green */
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 30px;
+            color: #333333;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        .content h2 {
+            color: #4CAF50;
+            font-size: 20px;
+            margin-top: 0;
+        }
+        .content p {
+            margin-bottom: 15px;
+        }
+
+        /* Button */
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .button {
+            background-color: #FF9800; /* Orange */
+            color: #ffffff;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            display: inline-block;
+            border: none; /* For email client compatibility */
+        }
+         /* Ensure button link color is white even after visit */
+        .button:link, .button:visited, .button:hover, .button:active {
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
+        /* Offer Highlight */
+        .offer {
+            background-color: #fff9c4; /* Light Yellow */
+            border-left: 5px solid #FFC107; /* Amber */
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+        .offer strong {
+            color: #E65100; /* Deep Orange */
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #eeeeee;
+            color: #777777;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+        .footer a {
+            color: #777777;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="background-color: #f4f4f4; padding: 20px 0;">
+                <!--[if (gte mso 9)|(IE)]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+                <tr>
+                <td align="center" valign="top" width="600">
+                <![endif]-->
+                <div class="container">
+                    <!-- Header -->
+                    <div class="header">
+                        <h1>Ready for a Healthier You?</h1>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="content">
+                        <h2>Hi {{ first_name | default('there') }},</h2> <!-- Use default if name is missing -->
+
+                        <p>Are you tired of struggling with weight loss plans that just don't stick? Do you dream of having more energy and feeling confident in your clothes?</p>
+
+                        <p>We understand the journey, and we're here to help you succeed with our revolutionary <strong>"Renew You" 8-Week Transformation Program!</strong></p>
+
+                        <p>Our program combines personalized meal guidance, effective workout routines, and supportive coaching to help you achieve sustainable results. Forget fad diets – learn healthy habits that last a lifetime.</p>
+
+                        <h3>What You'll Gain:</h3>
+                        <ul>
+                            <li>A clear path to shedding those extra pounds.</li>
+                            <li>Increased energy levels throughout the day.</li>
+                            <li>Delicious, easy-to-prepare meal ideas.</li>
+                            <li>Workouts tailored to your fitness level.</li>
+                            <li>Renewed confidence and a positive mindset!</li>
+                        </ul>
+
+                        <!-- The Offer -->
+                        <div class="offer">
+                            <strong>Limited-Time Promotion!</strong> Sign up for the "Renew You" program this week and get <strong>25% OFF</strong> your first month, plus our exclusive <strong>Healthy Habits Starter Kit</strong> absolutely FREE!
+                        </div>
+
+                        <p>Don't wait any longer to invest in your health and happiness. Take the first step towards the vibrant life you deserve.</p>
+
+                        <!-- Call to Action Button -->
+                        <div class="button-container">
+                            <!-- IMPORTANT: Replace '#' with your actual landing page URL -->
+                            <a href="#" target="_blank" class="button">Claim Your Discount Now!</a>
+                        </div>
+
+                        <p>We can't wait to see you transform!</p>
+
+                        <p>Warmly,<br>The Renew You Wellness Team</p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="footer">
+                        <p>You received this email because you opted in on our website.</p>
+                        <p>Renew You Wellness | 123 Health St, Wellness City, HC 45678</p>
+                        <p>
+                            <a href="#">Unsubscribe</a> | <a href="#">Manage Preferences</a> | <a href="#">View in Browser</a>
+                            <!-- IMPORTANT: Ensure Unsubscribe link is functional in your actual sending system -->
+                        </p>
+                    </div>
+                </div>
+                <!--[if (gte mso 9)|(IE)]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

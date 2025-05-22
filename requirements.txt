@@ -1,0 +1,8 @@
+Flask>=2.0
+secure-filename>=0.3  # Included with Werkzeug/Flask usually
+Jinja2>=3.0           # Included with Flask
+blinker>=1.4          # Signal support (often needed by Flask extensions/internals)
+itsdangerous>=2.0     # Included with Flask
+Werkzeug>=2.0         # Included with Flask
+click>=7.0            # Included with Flask
+# No extra email library needed for basic smtplib
