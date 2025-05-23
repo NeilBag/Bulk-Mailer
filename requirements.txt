@@ -5,4 +5,5 @@ blinker>=1.4          # Signal support (often needed by Flask extensions/interna
 itsdangerous>=2.0     # Included with Flask
 Werkzeug>=2.0         # Included with Flask
 click>=7.0            # Included with Flask
+gunicorn
 # No extra email library needed for basic smtplib
