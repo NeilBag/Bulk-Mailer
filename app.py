@@ -15,6 +15,12 @@ from flask import (Flask, request, render_template, redirect, url_for,
 from werkzeug.utils import secure_filename
 from jinja2 import Template # For rendering the email template
 
+# --- Global variables for rate limiting ---
+hourly_sent_count = 0
+current_hour_start_time = datetime.now() # Initialize to current time
+rate_limit_lock = threading.Lock()
+SMTP_HOURLY_LIMIT = 300 # Define the limit, e.g., 300
+
 # --- Configuration ---
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS_CSV = {'csv'}
@@ -142,6 +148,7 @@ def send_emails_background(job_uuid, csv_path, html_path, subject, sender_email,
     """
     Function to send emails in a separate thread with delays and error handling.
     """
+    global hourly_sent_count, current_hour_start_time
     # --- Configuration ---
     # Use current_app to access Flask app config within the thread context
     SEND_DELAY_SECONDS = 1.5  # Start with 1.5 seconds delay. Adjust as needed (1-5 seconds is common).
@@ -267,6 +274,60 @@ def send_emails_background(job_uuid, csv_path, html_path, subject, sender_email,
 
             # --- Start Sending Loop ---
             for i, recipient in enumerate(recipients):
+                # --- Start of Rate Limiting Logic ---
+                waiting_for_rate_limit_reset = False
+                while True: # Loop for rate limit checking and pausing
+                    with rate_limit_lock: # Acquire lock for checking/updating shared variables
+                        # 1. Check if the 1-hour window has passed, reset if necessary
+                        if datetime.now() >= current_hour_start_time + timedelta(hours=1):
+                            print(f"Job {job_uuid[:8]}: Rate limit window from {current_hour_start_time.strftime('%Y-%m-%d %H:%M:%S')} has expired. Resetting count from {hourly_sent_count}.")
+                            hourly_sent_count = 0
+                            current_hour_start_time = datetime.now()
+                            if waiting_for_rate_limit_reset: # If we were paused due to limit
+                                print(f"Job {job_uuid[:8]}: Resumed as rate limit window expired. New window started at {current_hour_start_time.strftime('%Y-%m-%d %H:%M:%S')}.")
+                                try:
+                                    # Ensure 'db' is accessible here, part of the app_context
+                                    db.execute("UPDATE jobs SET status = ? WHERE job_uuid = ?", ('Running', job_uuid))
+                                    db.commit()
+                                except Exception as e_db_update:
+                                    print(f"Job {job_uuid[:8]}: DB Error updating status to Running after rate limit pause: {e_db_update}")
+                                waiting_for_rate_limit_reset = False # No longer waiting
+
+                        # 2. Check if limit is reached within the current window
+                        if hourly_sent_count >= SMTP_HOURLY_LIMIT:
+                            if not waiting_for_rate_limit_reset: # First time hitting the limit in this pause cycle
+                                resume_time_approx = current_hour_start_time + timedelta(hours=1)
+                                status_msg = f'Paused - Hourly Limit ({SMTP_HOURLY_LIMIT}/hr). Resumes ~{resume_time_approx.strftime("%H:%M:%S")}'
+                                print(f"Job {job_uuid[:8]}: {status_msg}")
+                                try:
+                                    db.execute("UPDATE jobs SET status = ? WHERE job_uuid = ?", (status_msg, job_uuid))
+                                    db.commit()
+                                except Exception as e_db_limit:
+                                    print(f"Job {job_uuid[:8]}: DB Error updating status to Paused (limit): {e_db_limit}")
+                                waiting_for_rate_limit_reset = True
+                            # Lock will be released after this 'with' block for this iteration.
+                        else:
+                            # Limit not reached, proceed to send this email.
+                            # If we were waiting and now the limit is NOT reached (e.g. window reset), ensure status is Running.
+                            if waiting_for_rate_limit_reset:
+                                print(f"Job {job_uuid[:8]}: Condition to send met while previously waiting for rate limit. Ensuring status is Running.")
+                                try:
+                                    db.execute("UPDATE jobs SET status = ? WHERE job_uuid = ?", ('Running', job_uuid))
+                                    db.commit()
+                                except Exception as e_db_running:
+                                    print(f"Job {job_uuid[:8]}: DB Error updating status to Running (pre-send check): {e_db_running}")
+                                waiting_for_rate_limit_reset = False # No longer waiting
+                            break # Exit while True loop, proceed to send email for the current recipient
+
+                    # End of 'with rate_limit_lock' for this iteration.
+                    # If we are 'waiting_for_rate_limit_reset', sleep outside the lock before re-looping.
+                    if waiting_for_rate_limit_reset:
+                        # print(f"Job {job_uuid[:8]}: Rate limit active, sleeping for 30s before re-check.") # Optional log
+                        time.sleep(30) # Sleep for 30 seconds then re-evaluate by continuing the while loop.
+                                       # On next iteration, lock is re-acquired at the start of the 'with' block.
+                    # If not waiting_for_rate_limit_reset, the 'break' above would have exited the 'while True' loop.
+                # --- End of Rate Limiting Logic ---
+                
                 first_name = recipient['first_name']
                 to_email = recipient['email']
                 current_recipient_log = f"recipient {i+1}/{total_emails} ({to_email})"
@@ -295,6 +356,10 @@ def send_emails_background(job_uuid, csv_path, html_path, subject, sender_email,
                     db.execute("UPDATE jobs SET sent_count = ? WHERE job_uuid = ?", (sent_count, job_uuid))
                     db.commit()
                     # print(f"Job {job_uuid[:8]}: Successfully sent to {current_recipient_log}") # Verbose
+
+                    with rate_limit_lock: # Acquire lock to safely update shared counter
+                        hourly_sent_count += 1
+                        # Optional: print(f"Job {job_uuid[:8]}: Email sent. Hourly count: {hourly_sent_count}/{SMTP_HOURLY_LIMIT} in window starting {current_hour_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
                     # --- DELAY ADDED HERE ---
                     # print(f"Job {job_uuid[:8]}: Pausing for {SEND_DELAY_SECONDS}s...") # Verbose
