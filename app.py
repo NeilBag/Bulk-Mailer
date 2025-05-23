@@ -2,18 +2,19 @@ import os
 import csv
 import smtplib
 import ssl
+import socket
 import threading
 import uuid
 import sqlite3
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from flask import (Flask, request, render_template, redirect, url_for,
                    flash, g)
 from werkzeug.utils import secure_filename
-from jinja2 import Template # For rendering the email template
+from jinja2 import Template # For rendering 
 
 # --- Global variables for rate limiting ---
 hourly_sent_count = 0
